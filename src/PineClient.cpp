@@ -1,29 +1,52 @@
 #include "PineClient.h"
-#include <stdlib.h>
 
-void PineClient::Init()
+void PineClient::Open(std::string emu, int port)
 {
-	pcsx2 = new PCSX2(28011);
-	std::cout << "Game: " << pcsx2->GetGameTitle() << std::endl;
-	Read();
+    emulator = new Shared(port, emu, true);
+    std::cout << "Game: " << emulator->GetGameTitle() << std::endl;
 
+    if (emulator == nullptr)
+    {
+        throw("Emulator failed");
+    }
 }
 
-void PineClient::Read()
+uint8_t PineClient::Read8(uint32_t adr)
 {
-	// Use for structs
-	//for (auto i = 0; i < sizeof(Vector4) / sizeof(unsigned int); i++)
-	//{
-		//buffer[i] = pcsx2->Read<unsigned int>(0x001c503c + (i * sizeof(unsigned int)));
-	//}
+    return emulator->Read<uint8_t>(adr);
+}
 
-	unsigned int val = pcsx2->Read<unsigned int>(0x00252a70);
-	std::cout << "Value: " << val << std::endl;
+uint16_t PineClient::Read16(uint32_t adr)
+{
+    return emulator->Read<uint16_t>(adr);
+}
 
-	Sleep(500);
+uint32_t PineClient::Read32(uint32_t adr)
+{
+    return emulator->Read<uint32_t>(adr);
+}
 
-	// Ingame Wrk, Field 1
-	//pcsx2->Write(0x00252a71, 1);
-	pcsx2->Write(0x00343077, 0);
+uint64_t PineClient::Read64(uint32_t adr)
+{
+    return emulator->Read<uint64_t>(adr);
+}
 
+void PineClient::Write8(uint32_t adr, uint8_t val)
+{
+    emulator->Write<uint8_t>(adr, val);
+}
+
+void PineClient::Write16(uint32_t adr, uint16_t val)
+{
+    emulator->Write<uint16_t>(adr, val);
+}
+
+void PineClient::Write32(uint32_t adr, uint32_t val)
+{
+    emulator->Write<uint32_t>(adr, val);
+}
+
+void PineClient::Write64(uint32_t adr, uint64_t val)
+{
+    emulator->Write<uint64_t>(adr, val);
 }
