@@ -42,31 +42,31 @@ public:
 
     // Need to fix reading junk data
     template <typename T>
-    T ReadStruct(uint32_t adr, int sizeOf)
+    T *ReadStruct(uint32_t adr, int sizeOf)
     {
         uint32_t *bytes = new uint32_t[sizeOf];
         int amtToRead = 0;
-        T structToReturn;
+        T *structToReturn;
 
         if (!emulator)
         {
             printf("Emulator not open \n");
-            return T();
+            return nullptr;
         }
 
         if (sizeOf == 0)
         {
-            printf("Invalid Struct Size");
-            return T();
+            printf("Invalid Struct Size\n");
+            return nullptr;
         }
 
         while (amtToRead < sizeOf)
         {
-            *bytes = emulator->Read<uint32_t>(adr + amtToRead);
-            bytes++;
+            *bytes += emulator->Read<uint32_t>(adr + amtToRead);
+            // bytes++;
             amtToRead += 4;
         }
-        structToReturn = *reinterpret_cast<T *>(bytes);
+        structToReturn = reinterpret_cast<T *>(bytes);
         bytes = nullptr;
         amtToRead = 0;
         return structToReturn;
